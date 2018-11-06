@@ -294,13 +294,16 @@ class VideoService(QObject):
             run: bool=True) -> Union[bool, str]:
         self.checkDiskSpace(output)
         stream_map = self.parseMappings(allstreams)
+        fix_aac = '-c:a aac -strict experimental'
+        self.logger.info(fix_aac)
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
-            args = '-v 32 -i "{}" -ss {} -t {} -c:v {} -c:a copy -c:s copy {}-avoid_negative_ts 1 ' \
-                   '-y "{}"'.format(source, frametime, duration, encode_options, stream_map, output)
+            # args = '-v 32 -i "{}" -ss {} -t {} -c:v {} -c:a copy -c:s copy {}-avoid_negative_ts 1 ' \
+            args = '-v 32 -i "{}" -ss {} -t {} -c:v {} {} -c:s copy {}-avoid_negative_ts 1 ' \
+                   '-y "{}"'.format(source, frametime, duration, encode_options, fix_aac, stream_map, output)
         else:
-            args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -y "{}"' \
-                   .format(frametime, duration, source, stream_map, output)
+            args = '-v error -ss {} -t {} -i "{}" -c copy {} {}-avoid_negative_ts 1 -y "{}"' \
+                   .format(frametime, duration, source, fix_aac, stream_map, output)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:
