@@ -36,7 +36,7 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialog, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QLabel,
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
-                             QVBoxLayout, QWidget)
+                             QVBoxLayout, QWidget, QCheckBox)
 
 import sip
 
@@ -123,6 +123,8 @@ class VideoCutter(QWidget):
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
         self.videoService.addScenes.connect(self.addScenes)
+
+        self.normalize = self.settings.value('normalize', 'off', type=str) in {'on', 'true'}
 
         self.project_files = {
             'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])'),
@@ -310,6 +312,13 @@ class VideoCutter(QWidget):
         self.smartcutButton.setChecked(self.smartcut)
         self.smartcutButton.toggled.connect(self.toggleSmartCut)
 
+        self.normalizeButton = QPushButton(self, flat=True, checkable=True, objectName='normalizeButton',
+                                          toolTip='Normalizar Audio', statusTip='Aumenta/Disminuye el audio automáticamente',
+                                          cursor=Qt.PointingHandCursor)
+        self.normalizeButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
+        self.normalizeButton.setChecked(self.normalize)
+        self.normalizeButton.toggled.connect(self.toggleNormalizarAudio)
+
         # noinspection PyArgumentList
         self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
                                       statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
@@ -349,6 +358,7 @@ class VideoCutter(QWidget):
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', clicked=self.showAppMenu, statusTip='View menu options')
         self.menuButton.setFixedSize(QSize(33, 32))
+
 
         audioLayout = QHBoxLayout()
         audioLayout.setContentsMargins(0, 0, 0, 0)
@@ -402,6 +412,7 @@ class VideoCutter(QWidget):
         togglesLayout.addWidget(self.osdButton)
         togglesLayout.addWidget(self.thumbnailsButton)
         togglesLayout.addWidget(self.chaptersButton)
+        togglesLayout.addWidget(self.normalizeButton)
         togglesLayout.addWidget(self.smartcutButton)
         togglesLayout.addStretch(1)
 
@@ -447,6 +458,13 @@ class VideoCutter(QWidget):
 
         self.setLayout(layout)
         self.seekSlider.initStyle()
+
+    @pyqtSlot(bool)
+    def toggleNormalizarAudio(self, checked: bool) -> None:
+        self.normalize = checked
+        self.saveSetting('normalize', self.normalize)
+        self.normalizeButton.setChecked(self.normalize)
+        self.showText('Normalizar Audio {}'.format('habilitado' if checked else 'dishabilitado'))
 
     @pyqtSlot()
     def showAppMenu(self) -> None:
@@ -535,6 +553,7 @@ class VideoCutter(QWidget):
         self.saveProjectIcon = QIcon(':/images/save.png')
         self.filtersIcon = QIcon(':/images/filters.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
+        self.audioIcon = QIcon(':/images/info.png')
         self.streamsIcon = QIcon(':/images/streams.png')
         self.changelogIcon = QIcon(':/images/changelog.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
@@ -1341,7 +1360,7 @@ class VideoCutter(QWidget):
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(
                 parent=self.parent,
-                caption='Save media file',
+                caption='Guardar archivo',
                 directory=suggestedFilename,
                 filter=filefilter,
                 options=self.getFileDialogOptions())

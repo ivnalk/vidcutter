@@ -100,6 +100,10 @@
         <file>images/dark/settings-disabled.png</file>
         <file>images/dark/settings-hover.png</file>
         <file>images/dark/shortcuts.png</file>
+        <file>images/dark/normalize-disabled.png</file>
+        <file>images/dark/normalize-hover.png</file>
+        <file>images/dark/normalize-off.png</file>
+        <file>images/dark/normalize-on.png</file>
         <file>images/dark/smartcut-disabled.png</file>
         <file>images/dark/smartcut-hover.png</file>
         <file>images/dark/smartcut-off.png</file>
@@ -186,6 +190,10 @@
         <file>images/light/settings-disabled.png</file>
         <file>images/light/settings-hover.png</file>
         <file>images/light/shortcuts.png</file>
+        <file>images/light/normalize-disabled.png</file>
+        <file>images/light/normalize-hover.png</file>
+        <file>images/light/normalize-off.png</file>
+        <file>images/light/normalize-on.png</file>
         <file>images/light/smartcut-disabled.png</file>
         <file>images/light/smartcut-hover.png</file>
         <file>images/light/smartcut-off.png</file>

@@ -490,8 +490,26 @@ QPushButton:pressed#chaptersButton, QPushButton:checked#chaptersButton {
     border-image: url(:/images/dark/chapters-on.png);
 }
 
-QPushButton#smartcutButton {
-    border-image: url(:/images/dark/smartcut-off.png);
+QPushButton#normalizeButton {
+    border-image: url(:/images/dark/normalize-off.png);
+    width: 32px;
+    height: 31px;
+}
+
+QPushButton:hover#normalizeButton {
+    border-image: url(:/images/dark/normalize-hover.png);
+}
+
+QPushButton:disabled#normalizeButton {
+    border-image: url(:/images/dark/normalize-disabled.png);
+}
+
+QPushButton:pressed#normalizeButton, QPushButton:checked#normalizeButton {
+    border-image: url(:/images/dark/normalize-on.png);
+}
+
+QPushButton#normalizeButton {
+    border-image: url(:/images/dark/normalize-off.png);
     width: 32px;
     height: 31px;
 }
