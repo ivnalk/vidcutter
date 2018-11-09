@@ -294,7 +294,7 @@ class VideoService(QObject):
             run: bool=True) -> Union[bool, str]:
         self.checkDiskSpace(output)
         stream_map = self.parseMappings(allstreams)
-        fix_aac = '-c:a aac -strict experimental'
+        fix_aac = '-c:a aac'
         self.logger.info(fix_aac)
 
         # Cortar normalizando volumen de audio
@@ -309,7 +309,7 @@ class VideoService(QObject):
             args = '-v 32 -i "{}" -ss {} -t {} -c:v {} {} {} -c:s copy {}-avoid_negative_ts 1 ' \
                    '-y "{}"'.format(source, frametime, duration, encode_options, fix_aac, audio_normalize, stream_map, output)
         else:
-            args = '-v error -ss {} -t {} -i "{}" -c copy {} {} {}-avoid_negative_ts 1 -y "{}"' \
+            args = '-v error -ss {} -i "{}" -t {} -c copy {} {} {}-avoid_negative_ts 1 -y "{}"' \
                    .format(frametime, duration, source, fix_aac, audio_normalize, stream_map, output)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
