@@ -245,6 +245,7 @@ class VideoSlider(QSlider):
 
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()
+
         thumbsize = QSize(
             VideoService.config.thumbnails['TIMELINE'].height() * (framesize.width() / framesize.height()),
             VideoService.config.thumbnails['TIMELINE'].height())
@@ -275,6 +276,7 @@ class VideoSlider(QSlider):
                     frames.append(VideoService.captureFrame(self.settings, self.media, frame, self.size))
                     for frame in self.times
                 ]
+
                 self.completed.emit(frames)
 
         self.thumbsThread = QThread(self)

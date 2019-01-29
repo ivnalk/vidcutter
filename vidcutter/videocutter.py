@@ -36,7 +36,7 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialog, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QLabel,
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
-                             QVBoxLayout, QWidget, QCheckBox)
+                             QVBoxLayout, QWidget, QCheckBox, QScrollArea)
 
 import sip
 
@@ -448,13 +448,21 @@ class VideoCutter(QWidget):
         if sys.platform != 'darwin':
             controlsLayout.addSpacing(5)
 
+        
+        scroll_video = QScrollArea(self)
+        scroll_video.setWidget(self.sliderWidget)
+        scroll_video.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll_video.setFixedHeight(130)
+        scroll_video.setWidgetResizable(True)
+
         layout = QVBoxLayout()  
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
-        layout.addWidget(self.sliderWidget)
+        layout.addWidget(scroll_video)
         layout.addSpacing(5)
         layout.addLayout(controlsLayout)
+
 
         self.setLayout(layout)
         self.seekSlider.initStyle()
@@ -1079,7 +1087,19 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(float, int)
     def on_durationChanged(self, duration: float, frames: int) -> None:
+
+        # duration *= 1000
+        if 'duration_real' not in locals():
+            duration_seek = duration
+            duration_real = duration
+
         duration *= 1000
+        duration_seek *= 1000 * 2
+        duration_real *= 1000
+        # duration *= 900
+        # duration *= 800
+        # duration *= 700
+        # duration *= 500
         self.seekSlider.setRange(0, int(duration))
         self.timeCounter.setDuration(self.delta2QTime(round(duration)).toString(self.timeformat))
         self.frameCounter.setFrameCount(frames)

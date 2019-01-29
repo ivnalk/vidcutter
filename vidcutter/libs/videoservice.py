@@ -310,7 +310,7 @@ class VideoService(QObject):
                    '-y "{}"'.format(source, frametime, duration, encode_options, fix_aac, audio_normalize, stream_map, output)
         else:
             args = '-v error -ss {} -i "{}" -t {} -c copy {} {} {}-avoid_negative_ts 1 -y "{}"' \
-                   .format(frametime, duration, source, fix_aac, audio_normalize, stream_map, output)
+                   .format(frametime, source, duration, fix_aac, audio_normalize, stream_map, output)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:
